@@ -2,7 +2,9 @@
 This is selvar medal solution for Data Science Bowl 2018.
 The task was to segment nuclei on images.
 
-NN Framework: Keras
+NN Framework: Keras.
+
+Submission pipeline with some images can be found in main.ipynb
 
 I used U-Net architechture to approach this problem. Instead of encoder part I used transfer learning with VGG16 pretrained model. (model.py) 
 
