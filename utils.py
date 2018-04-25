@@ -3,6 +3,7 @@ import cv2
 
 
 def get_cropped_array(img, stride=66, target_size=(224, 224), mode=3):
+    """ The function creates images of target_size that are cropped from original image with the defined stride"""
     delta_w = int(np.ceil((img.shape[0] - target_size[0]) / stride))
     delta_h = int(np.ceil((img.shape[1] - target_size[1]) / stride))
     new_arr_shape = (delta_w * delta_h, target_size[0], target_size[1], 3) if mode == 3 else (
@@ -28,6 +29,10 @@ def get_cropped_array(img, stride=66, target_size=(224, 224), mode=3):
 
 
 def pad_image(img, multiplier=32):
+    """
+    Add paddings to image to make image size
+    mutliple of 32
+    """
     height, width, _ = img.shape
 
     if height % multiplier == 0:
@@ -53,10 +58,7 @@ def pad_image(img, multiplier=32):
 
 def crop_image(img, pads):
     """
-    img: numpy array of the shape (height, width)
-    pads: (x_min_pad, y_min_pad, x_max_pad, y_max_pad)
-
-    @return padded image
+    Crop pads from image
     """
     (x_min_pad, y_min_pad, x_max_pad, y_max_pad) = pads
     height, width = img.shape[:2]

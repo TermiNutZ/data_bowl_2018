@@ -11,8 +11,8 @@ INPUT_CHANNELS = 3
 # Number of output masks
 OUTPUT_MASK_CHANNELS = 3
 
-
 def double_conv_layer(x, size, dropout, batch_norm):
+    """The function performs adding normalization functions like Dropout and BatchNorm """
     if K.image_dim_ordering() == 'th':
         axis = 1
     else:
@@ -31,6 +31,7 @@ def double_conv_layer(x, size, dropout, batch_norm):
 
 
 def VGG_Unet_model(dropout_val=0.1, batch_norm=True):
+    """ The function creates  an U-net based model with VGG-16 encoder and ImageNet weights"""
     if K.image_dim_ordering() == 'th':
         axis = 1
     else:

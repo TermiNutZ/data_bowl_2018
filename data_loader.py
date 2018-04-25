@@ -1,12 +1,14 @@
 import cv2
+from skimage.color import rgb2gray
 import os
 import numpy as np
+import pandas as pd
 from tqdm import tqdm
 from skimage.io import imread_collection
 
 
 def read_image(filepath, color_mode=cv2.IMREAD_COLOR, target_size=None):
-    """Read an image from a file and resize it."""
+    """Read an image from a file and resize it"""
     img = cv2.imread(filepath, color_mode)
     if target_size:
         img = cv2.resize(img, target_size, interpolation=cv2.INTER_AREA)
@@ -14,7 +16,7 @@ def read_image(filepath, color_mode=cv2.IMREAD_COLOR, target_size=None):
 
 
 def read_mask(directory, target_size=None):
-    """Read and resize masks contained in a given directory."""
+    """Read and resize masks contained in a given directory"""
     for i, filename in enumerate(next(os.walk(directory))[2]):
         mask_path = os.path.join(directory, filename)
         mask_tmp = read_image(mask_path, cv2.IMREAD_GRAYSCALE, target_size)
@@ -66,7 +68,7 @@ def read_test_data_properties(test_dir, img_dir_name):
 
 
 def load_train_data(train_df, image_size=None):
-    """Load raw data."""
+    """Load train images and masks"""
     x_train, y_train, contour_train, contour_touch_train = [], [], [], []
 
     print('Loading train images and masks ...')
@@ -79,11 +81,11 @@ def load_train_data(train_df, image_size=None):
 
         contour_path = os.path.join(train_df['mask_dir'].loc[i], '..', 'contours.png')
         contour = read_image(contour_path, target_size=image_size)
-        contour = cv2.rgb2gray(contour)
+        contour = rgb2gray(contour)
 
         contour_path = os.path.join(train_df['mask_dir'].loc[i], '..', 'no_contours.png')
         contour_touch = read_image(contour_path, target_size=image_size)
-        contour_touch = cv2.rgb2gray(contour_touch)
+        contour_touch = rgb2gray(contour_touch)
 
         x_train.append(img)
         y_train.append(np.expand_dims(np.array(mask), axis=3))
@@ -100,6 +102,7 @@ def load_train_data(train_df, image_size=None):
 
 
 def load_test_data(test_df, image_size=None):
+    """Load test images"""
     x_test = []
     print('Loading test images ...')
     for i, filename in tqdm(enumerate(test_df['image_path']), total=len(test_df)):
@@ -111,6 +114,7 @@ def load_test_data(test_df, image_size=None):
 
 
 def get_train_labels(train_df):
+    """Load labels for train data"""
     train_labels = []
     for i, dir_path in tqdm(enumerate(train_df['dir_path']), total=len(train_df)):
         masks = os.path.join(dir_path, "masks", "*.png")

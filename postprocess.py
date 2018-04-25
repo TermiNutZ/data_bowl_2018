@@ -6,6 +6,9 @@ from scipy import ndimage as ndi
 
 
 def relabel(img):
+    """
+    Make labeling from 0 to n.
+    """
     h, w = img.shape
 
     relabel_dict = {}
@@ -26,6 +29,10 @@ def drop_small(img, min_size):
 
 
 def get_labels(mask, center):
+    """
+    Return labels of nuclei from predicted 
+    mask and centers.
+    """
     mask = (mask > 0.45)
     center = (center > 0.8)
 
@@ -62,6 +69,10 @@ def labels_to_rle(lab_mask):
 
 
 def get_rle_encoding(test_df, y_test_pred_proba):
+    """
+    Return run length for each nuclei in test image
+    with id of image.
+    """
     test_pred_rle = []
     test_pred_ids = []
     all_labels = []

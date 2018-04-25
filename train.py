@@ -14,13 +14,14 @@ from postprocess import get_labels
 
 
 class TestCallback(Callback):
+    """ The function calculates target loss and if it improves the weights of the model are saved"""
     def __init__(self, test_data, file_path, once_in=5):
         self.test_data = test_data
         self.max_val = -1.0
         self.file_path = file_path
         self.once_in = once_in
 
-    def on_epoch_end(self, epoch):
+    def on_epoch_end(self, epoch, logs={}):
         if (epoch + 1) % self.once_in != 0:
             return
         x, y = self.test_data
@@ -49,6 +50,8 @@ class TestCallback(Callback):
 
 
 def batch_generator(x, y, batch_size, augment_func):
+    """ The function creates augumented batches of given batch_size.
+        Augmentation is defined by augment_func function"""
     start = 0
     indices = np.arange(x.shape[0])
     while True:
@@ -71,6 +74,7 @@ def batch_generator(x, y, batch_size, augment_func):
 
 
 def train(x_train, y_train, labels_train, batch_size=32, epoch=200):
+    """ The function performs model's training on 5 folds, so 80% of data is used to train and 20% for validation"""
     skf = KFold(n_splits=5, random_state=17, shuffle=True)
     i = 0
     model_paths = []

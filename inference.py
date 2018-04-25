@@ -8,6 +8,11 @@ from model import VGG_Unet_model
 
 
 def predict_single_image(model, x):
+    """
+    Get prediction of model for single image.
+    Pad image if it is not multiplier of 32 and
+    make needed augmentations.
+    """
     x_img, pading = pad_image(x)
     x_img = augment_test(x_img.copy())[0]
     kek = model.predict(np.expand_dims(x_img, 0))
@@ -15,6 +20,11 @@ def predict_single_image(model, x):
 
 
 def inference(x_test, model_paths):
+    """
+    Predict masks for test images using saved
+    models in model_paths with TTA.
+    Return average result.
+    """
     models = []
     for model_path in model_paths:
         models += [VGG_Unet_model()]

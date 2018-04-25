@@ -25,6 +25,7 @@ def dice_coef_loss(y_true, y_pred):
 
 
 def mask_loss(y_true, y_pred):
+    """(BCE + 1 - dice)  for single chanel"""
     loss = binary_crossentropy(y_true, y_pred)
 
     loss += dice_coef_loss(y_true, y_pred)
