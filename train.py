@@ -72,6 +72,8 @@ def batch_generator(x, y, batch_size, augment_func):
 
 def train(x_train, y_train, labels_train, batch_size=32, epoch=200):
     skf = KFold(n_splits=5, random_state=17, shuffle=True)
+    i = 0
+    model_paths = []
     for train_index, test_index in skf.split(x_train):
         x_tr_fold = x_train[train_index]
         y_tr_fold = y_train[train_index]
@@ -81,8 +83,9 @@ def train(x_train, y_train, labels_train, batch_size=32, epoch=200):
 
         model = VGG_Unet_model()
         optim = Adam()
+        model_paths += ["models/fold{}.h5".format(i)]
         model.compile(optimizer=optim, loss=full_loss, metrics=[dice_coef])
-        callbacks_list = [TestCallback((x_val_fold, lab_val_fold), "models/fold{}.h5".format(i), once_in=25)]
+        callbacks_list = [TestCallback((x_val_fold, lab_val_fold), model_paths[-1], once_in=25)]
 
         x_val, y_val = [], []
         for x_cur, y_cur in zip(x_val_fold, y_val_fold):
@@ -99,3 +102,5 @@ def train(x_train, y_train, labels_train, batch_size=32, epoch=200):
                             steps_per_epoch=steps_per_epoch,
                             epochs=epoch, verbose=1, callbacks=callbacks_list, workers=6,
                             validation_data=(x_val[subsample_ind], y_val[subsample_ind]))
+        i += 1
+    return model_paths

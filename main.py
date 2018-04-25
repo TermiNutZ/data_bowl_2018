@@ -1,7 +1,11 @@
+import pandas as pd
 import os
 import numpy as np
 
 from data_loader import read_test_data_properties, read_train_data_properties, load_train_data, load_test_data, get_train_labels
+from train import train
+from inference import inference
+from postprocess import get_rle_encoding
 
 CW_DIR = os.getcwd()
 TRAIN_DIRS = [os.path.join(os.path.dirname(CW_DIR), 'data_bowl', 'data', 'stage1_train'),
@@ -21,6 +25,13 @@ labels_train = get_train_labels(train_df)
 
 x_test = load_test_data(test_df)
 
+model_paths = train(train_df, y_train_full, labels_train)
+y_prediction = inference(x_test, model_paths)
+y_test_rle, y_test_ids = get_rle_encoding(test_df, y_prediction)
 
-
+sub = pd.DataFrame()
+sub['ImageId'] = y_test_ids
+sub['EncodedPixels'] = pd.Series(y_test_rle).apply(lambda x: ' '.join(str(y) for y in x))
+sub.to_csv('sub-dsbowl2018.csv', index=False)
+sub.head()
 
